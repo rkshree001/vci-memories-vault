@@ -109,7 +109,21 @@ const BirthdayReminderForm = () => {
   );
 
   const handleSelectChange = useCallback((name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => {
+      const newData = { ...prev, [name]: value };
+      
+      // Smart Gender Sync for Spouse
+      if (name === "vcehGender") {
+        if (value === "male") {
+          newData.spouseGender = "female";
+        } else if (value === "female") {
+          newData.spouseGender = "male";
+        }
+      }
+      
+      return newData;
+    });
+
     if (errors[name]) {
       setErrors((prev) => {
         const newErrors = { ...prev };

@@ -1,197 +1,122 @@
-# Google Apps Script Setup Guide
-
-## Step 1: Create a Google Sheet
-
-1. Go to [Google Sheets](https://sheets.google.com)
-2. Create a new spreadsheet
-3. Name it "VCI Birthday Reminders"
-4. Add these headers in Row 1:
-   - A1: Timestamp
-   - B1: Member Type
-   - C1: VCI Member Name
-   - D1: VCI Mobile
-   - E1: VCI Email
-   - F1: VCI DOB
-   - G1: VCI Gender
-   - H1: Marital Status
-   - I1: Person Name
-   - J1: Person DOB
-   - K1: Person Mobile
-   - L1: Anniversary Date
-   - M1: Business Name
-   - N1: Employee Count
-   - O1: Employee Name
-   - P1: Employee Mobile
-
-## Step 2: Create Google Apps Script
-
-1. In your Google Sheet, click **Extensions** → **Apps Script**
-2. Delete any existing code and paste the following:
-
-```javascript
 /**
- * VCI Birthday Reminder - Google Apps Script
- * Handles POST requests from the web form and saves to Google Sheets
+ * GOOGLE APPS SCRIPT FOR VCEH FAMILY REGISTRY (v2 - Photo Support)
+ * 
+ * Instructions:
+ * 1. Open Google Sheets
+ * 2. Extensions > Apps Script
+ * 3. Replace ALL existing code with this script
+ * 4. Create a folder in Google Drive named "VCEH Photos"
+ * 5. Copy that folder's ID from the URL (e.g., 1abc123...)
+ * 6. Replace "PASTE_YOUR_FOLDER_ID_HERE" below with that ID
+ * 7. Deploy > New Deployment > Web App > Access: Anyone
  */
 
-// Configuration - Update this with your Sheet ID
-const SHEET_ID = '1ptDMjMQqSuuqV8pMHKUq0fLxzr2iClPLH94UzHlxN3M'; // Your Google Sheet ID
-const SHEET_NAME = 'Sheet1';
+const FOLDER_ID = "PASTE_YOUR_FOLDER_ID_HERE";
 
-/**
- * Handle POST requests from the web form
- */
 function doPost(e) {
   try {
-    // Parse the incoming JSON data
     const data = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheets()[0];
     
-    // Get the spreadsheet and sheet
-    const ss = SpreadsheetApp.openById(SHEET_ID);
-    const sheet = ss.getSheetByName(SHEET_NAME);
-    
-    const timestamp = new Date().toISOString();
-    const vci = data.vciMember;
-    const spouse = data.spouse;
-    const familyMembers = data.familyMembers || [];
-    const business = data.business;
-    
-    // Add VCI Member row
-    sheet.appendRow([
-      timestamp,
-      'VCI Member',
-      vci.name,
-      vci.mobile,
-      vci.email || '',
-      vci.dateOfBirth,
-      vci.gender,
-      vci.maritalStatus,
-      vci.name,
-      vci.dateOfBirth,
-      vci.mobile,
-      '',
-      business.name || '',
-      business.employeeCount || '',
-      business.employeeName || '',
-      business.employeeMobile || ''
-    ]);
-    
-    // Add Spouse row if married
-    if (spouse && spouse.name) {
+    // Set headers if empty
+    if (sheet.getLastRow() === 0) {
       sheet.appendRow([
-        timestamp,
-        'Spouse',
-        vci.name,
-        vci.mobile,
-        vci.email || '',
-        vci.dateOfBirth,
-        vci.gender,
-        vci.maritalStatus,
-        spouse.name,
-        spouse.dateOfBirth || '',
-        spouse.mobile || '',
-        spouse.anniversaryDate || '',
-        '',
-        '',
-        '',
-        ''
+        "Timestamp", 
+        "Member of VCEH", 
+        "Full Name", 
+        "Mobile Number", 
+        "Email ID", 
+        "Date of Birth", 
+        "Gender", 
+        "Marital Status", 
+        "Anniversary Date", 
+        "Photo URL",
+        "Business Name", 
+        "Employee Count"
       ]);
     }
     
-    // Add Family Member rows
-    familyMembers.forEach(function(member) {
-      sheet.appendRow([
-        timestamp,
-        'Family Member',
-        vci.name,
-        vci.mobile,
-        vci.email || '',
-        vci.dateOfBirth,
-        vci.gender,
-        vci.maritalStatus,
-        member.name,
-        member.dateOfBirth || '',
-        member.mobile || '',
-        '',
-        '',
-        '',
-        '',
-        ''
-      ]);
-    });
+    let photoUrl = "NA";
     
-    // Return success response
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: true, message: 'Data saved successfully' }))
+    // Handle Member Photo Upload
+    if (data.photo && data.photo.includes("base64")) {
+      try {
+        const folder = DriveApp.getFolderById(FOLDER_ID);
+        const contentType = data.photo.substring(5, data.photo.indexOf(';'));
+        const bytes = Utilities.base64Decode(data.photo.split(',')[1]);
+        const fileName = "VCEH_" + data.vcehName.replace(/\s+/g, '_') + "_" + new Date().getTime() + ".png";
+        const file = folder.createFile(Utilities.newBlob(bytes, contentType, fileName));
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        photoUrl = file.getUrl();
+      } catch (fError) {
+        Logger.log("Photo upload failed: " + fError);
+      }
+    }
+    
+    // 1. Add Member Row
+    sheet.appendRow([
+      data.timestamp,
+      data.vcehName,
+      data.vcehName,
+      data.vcehMobile,
+      data.vcehEmail || "NA",
+      data.vcehDob,
+      data.vcehGender,
+      data.maritalStatus,
+      data.maritalStatus === "married" ? data.anniversaryDate : "NA",
+      photoUrl,
+      data.businessName || "NA",
+      data.employeeCount || "NA"
+    ]);
+    
+    // 2. Add Spouse Row
+    if (data.maritalStatus === "married") {
+      sheet.appendRow([
+        data.timestamp,
+        data.vcehName,
+        data.spouseName,
+        data.spouseMobile || "NA",
+        "NA",
+        data.spouseDob,
+        data.spouseGender,
+        data.maritalStatus,
+        data.anniversaryDate,
+        "NA",
+        data.businessName || "NA",
+        "NA"
+      ]);
+    }
+    
+    // 3. Add Children Rows
+    if (data.familyMembers && data.familyMembers.length > 0) {
+      data.familyMembers.forEach(function(child) {
+        sheet.appendRow([
+          data.timestamp,
+          data.vcehName,
+          child.name,
+          "NA",
+          "NA",
+          child.dateOfBirth,
+          child.gender,
+          "NA",
+          "NA",
+          "NA",
+          data.businessName || "NA",
+          "NA"
+        ]);
+      });
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({ "result": "success" }))
       .setMimeType(ContentService.MimeType.JSON);
       
   } catch (error) {
-    // Return error response
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: false, error: error.toString() }))
+    return ContentService.createTextOutput(JSON.stringify({ "result": "error", "error": error.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-/**
- * Handle GET requests (for testing)
- */
 function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({ status: 'VCI Birthday Reminder API is running' }))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput("VCEH API is running").setMimeType(ContentService.MimeType.TEXT);
 }
-
-/**
- * Test function - run this to verify setup
- */
-function testSetup() {
-  const ss = SpreadsheetApp.openById(SHEET_ID);
-  const sheet = ss.getSheetByName(SHEET_NAME);
-  Logger.log('Sheet found: ' + sheet.getName());
-  Logger.log('Setup is correct!');
-}
-```
-
-## Step 3: Deploy as Web App
-
-1. Click **Deploy** → **New deployment**
-2. Click the gear icon ⚙️ next to "Select type" and choose **Web app**
-3. Configure:
-   - **Description**: VCI Birthday Reminder API
-   - **Execute as**: Me
-   - **Who has access**: Anyone
-4. Click **Deploy**
-5. Click **Authorize access** and allow permissions
-6. **Copy the Web App URL** (looks like: `https://script.google.com/macros/s/...../exec`)
-
-## Step 4: Update Your App
-
-Replace `YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL` in `src/components/BirthdayReminderForm.tsx` with your Web App URL.
-
-```typescript
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
-```
-
-## Important Notes
-
-- The script uses `no-cors` mode because Google Apps Script doesn't support CORS
-- Each family member creates a separate row linked to the VCI Member
-- All rows share the same timestamp for grouping
-- The script handles unlimited family members
-
-## Troubleshooting
-
-1. **Script not working?** Make sure you deployed as "Anyone" can access
-2. **Permission errors?** Re-authorize the script
-3. **Data not appearing?** Check the Sheet ID is correct
-4. **CORS errors?** The app uses `no-cors` mode which should bypass this
-
-## Testing
-
-1. Visit your Web App URL in a browser - you should see:
-   ```json
-   {"status":"VCI Birthday Reminder API is running"}
-   ```
-2. Submit a test entry from your form
-3. Check your Google Sheet for the new rows

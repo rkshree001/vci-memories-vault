@@ -78,7 +78,25 @@ const BirthdayReminderForm = () => {
 
   const handleSelectChange = useCallback((name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
-  }, []);
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  }, [errors]);
+
+  const handleDateChange = useCallback((name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  }, [errors]);
 
   const addFamilyMember = useCallback(() => {
     const newMember: FamilyMember = {
@@ -339,6 +357,7 @@ const BirthdayReminderForm = () => {
                 type="date"
                 value={formData.vciDob}
                 onChange={handleChange}
+                onDateChange={handleDateChange}
                 required
                 error={errors.vciDob}
               />
@@ -411,6 +430,7 @@ const BirthdayReminderForm = () => {
                   type="date"
                   value={formData.anniversaryDate}
                   onChange={handleChange}
+                  onDateChange={handleDateChange}
                   required
                   error={errors.anniversaryDate}
                 />
@@ -431,6 +451,7 @@ const BirthdayReminderForm = () => {
                   type="date"
                   value={formData.spouseDob}
                   onChange={handleChange}
+                  onDateChange={handleDateChange}
                   required
                   error={errors.spouseDob}
                 />

@@ -24,6 +24,10 @@ const FamilyMemberCard = ({
   onRemove,
   errors,
 }: FamilyMemberCardProps) => {
+  const handleDateChange = (name: string, value: string) => {
+    onChange(member.id, "dateOfBirth", value);
+  };
+
   return (
     <div className="relative rounded-lg border border-border bg-muted/50 p-4">
       <Button
@@ -58,6 +62,7 @@ const FamilyMemberCard = ({
           type="date"
           value={member.dateOfBirth}
           onChange={(e) => onChange(member.id, "dateOfBirth", e.target.value)}
+          onDateChange={handleDateChange}
           required
           error={errors[`family-dob-${member.id}`]}
         />

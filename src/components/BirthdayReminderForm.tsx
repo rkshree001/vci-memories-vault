@@ -28,6 +28,7 @@ interface FormData {
   spouseName: string;
   spouseDob: string;
   spouseMobile: string;
+  spouseGender: string;
   // Business Details
   businessName: string;
   employeeCount: string;
@@ -44,6 +45,7 @@ const initialFormData: FormData = {
   spouseName: "",
   spouseDob: "",
   spouseMobile: "",
+  spouseGender: "",
   businessName: "",
   employeeCount: "",
 };
@@ -203,6 +205,7 @@ const BirthdayReminderForm = () => {
       spouseName: formData.maritalStatus === "married" ? formData.spouseName : "",
       spouseDob: formData.maritalStatus === "married" ? formData.spouseDob : "",
       spouseMobile: formData.maritalStatus === "married" ? formData.spouseMobile : "",
+      spouseGender: formData.maritalStatus === "married" ? formData.spouseGender : "",
       businessName: formData.businessName,
       employeeCount: formData.employeeCount,
       familyMembers: familyMembers.map((m) => ({
@@ -450,6 +453,43 @@ const BirthdayReminderForm = () => {
                   maxLength={10}
                   error={errors.spouseMobile}
                 />
+              </div>
+
+              {/* Spouse Gender */}
+              <div className="mt-4 space-y-3">
+                <Label className="text-sm font-medium text-foreground">
+                  Spouse Gender <span className="text-destructive">*</span>
+                </Label>
+                <RadioGroup
+                  value={formData.spouseGender}
+                  onValueChange={(value) => handleSelectChange("spouseGender", value)}
+                  className="flex flex-wrap gap-2"
+                >
+                  {["Male", "Female", "Other", "Prefer not to say"].map(
+                    (option) => {
+                      const optionValue = option.toLowerCase().replace(/\s+/g, "-");
+                      const isSelected = formData.spouseGender === optionValue;
+                      return (
+                        <label
+                          key={option}
+                          htmlFor={`spouse-gender-${option}`}
+                          className={`inline-flex items-center gap-2 rounded-md border px-4 py-2 cursor-pointer transition-colors text-sm ${
+                            isSelected
+                              ? "border-primary bg-primary/5 text-foreground"
+                              : "border-border bg-background text-foreground hover:border-muted-foreground"
+                          }`}
+                        >
+                          <RadioGroupItem
+                            value={optionValue}
+                            id={`spouse-gender-${option}`}
+                            className="h-4 w-4"
+                          />
+                          {option}
+                        </label>
+                      );
+                    }
+                  )}
+                </RadioGroup>
               </div>
             </FormSection>
           )}

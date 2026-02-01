@@ -361,16 +361,16 @@ const BirthdayReminderForm = () => {
                       <label
                         key={option}
                         htmlFor={`gender-${option}`}
-                        className={`inline-flex items-center gap-2 rounded-md border px-4 py-2 cursor-pointer transition-colors text-sm ${
+                        className={`flex items-center justify-center rounded-lg border-2 px-6 py-3 cursor-pointer transition-all duration-200 text-sm font-medium ${
                           isSelected
-                            ? "border-primary bg-primary/5 text-foreground"
-                            : "border-border bg-background text-foreground hover:border-muted-foreground"
+                            ? "border-primary bg-primary/10 text-primary shadow-sm"
+                            : "border-muted bg-background text-muted-foreground hover:border-muted-foreground hover:bg-muted/5"
                         }`}
                       >
                         <RadioGroupItem
                           value={optionValue}
                           id={`gender-${option}`}
-                          className="h-4 w-4"
+                          className="sr-only"
                         />
                         {option}
                       </label>
@@ -473,16 +473,16 @@ const BirthdayReminderForm = () => {
                         <label
                           key={option}
                           htmlFor={`spouse-gender-${option}`}
-                          className={`inline-flex items-center gap-2 rounded-md border px-4 py-2 cursor-pointer transition-colors text-sm ${
+                          className={`flex items-center justify-center rounded-lg border-2 px-6 py-3 cursor-pointer transition-all duration-200 text-sm font-medium ${
                             isSelected
-                              ? "border-primary bg-primary/5 text-foreground"
-                              : "border-border bg-background text-foreground hover:border-muted-foreground"
+                              ? "border-primary bg-primary/10 text-primary shadow-sm"
+                              : "border-muted bg-background text-muted-foreground hover:border-muted-foreground hover:bg-muted/5"
                           }`}
                         >
                           <RadioGroupItem
                             value={optionValue}
                             id={`spouse-gender-${option}`}
-                            className="h-4 w-4"
+                            className="sr-only"
                           />
                           {option}
                         </label>

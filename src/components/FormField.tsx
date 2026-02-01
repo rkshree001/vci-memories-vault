@@ -61,7 +61,7 @@ const FormField = ({
           {label}
           {required && <span className="ml-1 text-destructive">*</span>}
         </Label>
-        <div className="relative">
+        <div className="relative group">
           <Input
             id={name}
             name={name}
@@ -69,7 +69,7 @@ const FormField = ({
             value={value}
             onChange={onChange}
             required={required}
-            className={`w-full bg-background pr-12 ${error ? "border-destructive" : ""}`}
+            className={`w-full bg-background pr-12 transition-all duration-200 focus:shadow-md ${error ? "border-destructive" : "group-hover:border-muted-foreground/50"}`}
           />
           <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
             <PopoverTrigger asChild>
@@ -103,10 +103,17 @@ const FormField = ({
 
   return (
     <div className="space-y-2">
-      <Label htmlFor={name} className="text-sm font-medium text-foreground">
-        {label}
-        {required && <span className="ml-1 text-destructive">*</span>}
-      </Label>
+      <div className="flex items-center justify-between">
+        <Label htmlFor={name} className="text-sm font-medium text-foreground">
+          {label}
+          {required && <span className="ml-1 text-destructive font-bold">*</span>}
+        </Label>
+        {type === "tel" && maxLength && (
+          <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+            {value.length} / {maxLength}
+          </span>
+        )}
+      </div>
       <Input
         id={name}
         name={name}
@@ -118,7 +125,7 @@ const FormField = ({
         pattern={pattern}
         maxLength={maxLength}
         inputMode={inputMode}
-        className={`w-full bg-background ${error ? "border-destructive" : ""}`}
+        className={`w-full bg-background transition-all duration-200 focus:shadow-md hover:border-muted-foreground/50 ${error ? "border-destructive" : ""}`}
       />
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>

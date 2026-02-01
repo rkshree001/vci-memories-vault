@@ -305,7 +305,7 @@ const BirthdayReminderForm = () => {
           <FormSection 
             title="Member Information" 
             icon={User}
-            className="hover-elevate transition-all duration-300"
+            className="hover-elevate transition-all duration-300 focus-within:shadow-lg focus-within:border-primary/50"
           >
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField
@@ -423,7 +423,7 @@ const BirthdayReminderForm = () => {
             <FormSection 
               title="Spouse Details" 
               icon={Heart}
-              className="hover-elevate transition-all duration-300"
+              className="hover-elevate transition-all duration-300 focus-within:shadow-lg focus-within:border-primary/50"
             >
               <div className="grid gap-4 sm:grid-cols-2">
                 <FormField
@@ -512,7 +512,7 @@ const BirthdayReminderForm = () => {
           <FormSection 
             title="Family Members" 
             icon={Users}
-            className="hover-elevate transition-all duration-300"
+            className="hover-elevate transition-all duration-300 focus-within:shadow-lg focus-within:border-primary/50"
           >
             <div className="space-y-4">
               {familyMembers.length === 0 ? (
@@ -548,7 +548,7 @@ const BirthdayReminderForm = () => {
           <FormSection 
             title="Business Details" 
             icon={Briefcase}
-            className="hover-elevate transition-all duration-300"
+            className="hover-elevate transition-all duration-300 focus-within:shadow-lg focus-within:border-primary/50"
           >
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField

@@ -30,6 +30,7 @@ interface FormData {
   spouseMobile: string;
   // Business Details
   businessName: string;
+  employeeCount: string;
 }
 
 const initialFormData: FormData = {
@@ -44,6 +45,7 @@ const initialFormData: FormData = {
   spouseDob: "",
   spouseMobile: "",
   businessName: "",
+  employeeCount: "",
 };
 
 const BirthdayReminderForm = () => {
@@ -211,6 +213,7 @@ const BirthdayReminderForm = () => {
       })),
       business: {
         name: formData.businessName,
+        employeeCount: formData.employeeCount,
       },
     };
 
@@ -489,13 +492,24 @@ const BirthdayReminderForm = () => {
 
           {/* Business Details */}
           <FormSection title="Business Details" icon={Briefcase}>
-            <FormField
-              label="Business Name"
-              name="businessName"
-              value={formData.businessName}
-              onChange={handleChange}
-              placeholder="Enter business name"
-            />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField
+                label="Business Name"
+                name="businessName"
+                value={formData.businessName}
+                onChange={handleChange}
+                placeholder="Enter business name"
+              />
+              <FormField
+                label="Employee Count"
+                name="employeeCount"
+                type="number"
+                value={formData.employeeCount}
+                onChange={handleChange}
+                placeholder="Number of employees"
+                inputMode="numeric"
+              />
+            </div>
           </FormSection>
 
           {/* Submit Button */}

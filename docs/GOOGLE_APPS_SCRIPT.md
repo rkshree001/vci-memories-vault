@@ -10,7 +10,7 @@
  * 6. Deploy > New Deployment > Web App > Access: Anyone.
  */
 
-const FOLDER_ID = "PASTE_YOUR_FOLDER_ID_HERE";
+const FOLDER_ID = "1mBJ3wwpx46ol0VGJi5gPsFhmkek8TYw_";
 const SHEET_ID = "1ptDMjMQqSuuqV8pMHKUq0fLxzr2iClPLH94UzHlxN3M";
 const SHEET_NAME = "Sheet1";
 

@@ -9,7 +9,7 @@ function doPost(e) {
     
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
-        'TimeStamp', 'VCI Member Name', 'Type', 'Name', 'Mobile', 'Email', 
+        'TimeStamp', 'Member of VCI', 'Type', 'Name', 'Mobile', 'Email', 
         'DOB', 'Gender', 'Marital Status', 'Anniversary', 'Business Name', 'Emp Count'
       ]);
     }
@@ -19,7 +19,7 @@ function doPost(e) {
     var maritalStatus = data.maritalStatus;
     var anniversary = data.anniversaryDate || '';
     
-    // 1. Add VCI Member Row - Now including Anniversary and Marital Status context
+    // 1. Add VCI Member Row
     sheet.appendRow([
       timestamp, 
       mainVciName, 

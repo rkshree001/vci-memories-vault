@@ -33,8 +33,15 @@ const FamilyMemberCard = ({
   onRemove,
   errors,
 }: FamilyMemberCardProps) => {
+  const handleMemberChange = (id: string, field: keyof FamilyMember, value: string) => {
+    if (field === "mobileNumber" && value !== "") {
+      if (!/^\d*$/.test(value)) return;
+    }
+    onChange(id, field, value);
+  };
+
   return (
-    <div className="relative rounded-lg border border-border bg-muted/50 p-4">
+    <div className="relative rounded-lg border border-border bg-muted/50 p-4 transition-all duration-300 hover:shadow-md">
       <Button
         type="button"
         variant="ghost"
@@ -55,7 +62,7 @@ const FamilyMemberCard = ({
           label="Name"
           name={`family-name-${member.id}`}
           value={member.name}
-          onChange={(e) => onChange(member.id, "name", e.target.value)}
+          onChange={(e) => handleMemberChange(member.id, "name", e.target.value)}
           required
           placeholder="Enter name"
           error={errors[`family-name-${member.id}`]}
@@ -67,7 +74,7 @@ const FamilyMemberCard = ({
           </Label>
           <Select
             value={member.gender}
-            onValueChange={(value) => onChange(member.id, "gender", value)}
+            onValueChange={(value) => handleMemberChange(member.id, "gender", value)}
           >
             <SelectTrigger className="w-full bg-background">
               <SelectValue placeholder="Select" />
@@ -88,7 +95,7 @@ const FamilyMemberCard = ({
           name={`family-dob-${member.id}`}
           type="date"
           value={member.dateOfBirth}
-          onChange={(e) => onChange(member.id, "dateOfBirth", e.target.value)}
+          onChange={(e) => handleMemberChange(member.id, "dateOfBirth", e.target.value)}
           required
           error={errors[`family-dob-${member.id}`]}
         />
@@ -98,7 +105,7 @@ const FamilyMemberCard = ({
           name={`family-mobile-${member.id}`}
           type="tel"
           value={member.mobileNumber}
-          onChange={(e) => onChange(member.id, "mobileNumber", e.target.value)}
+          onChange={(e) => handleMemberChange(member.id, "mobileNumber", e.target.value)}
           placeholder="10-digit number"
           inputMode="numeric"
           maxLength={10}

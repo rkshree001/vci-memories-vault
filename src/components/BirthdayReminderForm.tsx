@@ -61,6 +61,12 @@ const BirthdayReminderForm = () => {
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
+      
+      // Restrict mobile numbers to digits only
+      if ((name === "vciMobile" || name === "spouseMobile") && value !== "") {
+        if (!/^\d*$/.test(value)) return;
+      }
+
       setFormData((prev) => ({ ...prev, [name]: value }));
       // Clear error when user starts typing
       if (errors[name]) {

@@ -118,6 +118,8 @@ const BirthdayReminderForm = () => {
           newData.spouseGender = "female";
         } else if (value === "female") {
           newData.spouseGender = "male";
+        } else {
+          newData.spouseGender = ""; // Reset if other/prefer not to say
         }
       }
       
@@ -250,7 +252,7 @@ const BirthdayReminderForm = () => {
       spouseName: formData.maritalStatus === "married" ? formData.spouseName : "",
       spouseDob: formData.maritalStatus === "married" ? formData.spouseDob : "",
       spouseMobile: formData.maritalStatus === "married" ? formData.spouseMobile : "",
-      spouseGender: formData.maritalStatus === "married" ? "female" : "",
+      spouseGender: formData.maritalStatus === "married" ? formData.spouseGender : "",
       businessName: formData.businessName,
       employeeCount: formData.employeeCount,
       familyMembers: familyMembers.map((m) => ({

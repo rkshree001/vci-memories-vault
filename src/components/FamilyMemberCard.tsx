@@ -14,8 +14,7 @@ export interface FamilyMember {
   id: string;
   name: string;
   dateOfBirth: string;
-  mobileNumber: string;
-  gender: string;
+  gender: string; // "son" or "daughter"
 }
 
 interface FamilyMemberCardProps {
@@ -34,9 +33,6 @@ const FamilyMemberCard = ({
   errors,
 }: FamilyMemberCardProps) => {
   const handleMemberChange = (id: string, field: keyof FamilyMember, value: string) => {
-    if (field === "mobileNumber" && value !== "") {
-      if (!/^\d*$/.test(value)) return;
-    }
     onChange(id, field, value);
   };
 
@@ -48,16 +44,16 @@ const FamilyMemberCard = ({
         size="icon"
         className="absolute right-2 top-2 h-8 w-8 text-muted-foreground hover:text-destructive"
         onClick={() => onRemove(member.id)}
-        aria-label={`Remove family member ${index + 1}`}
+        aria-label={`Remove child ${index + 1}`}
       >
         <X className="h-4 w-4" />
       </Button>
       
-      <p className="mb-4 text-sm font-medium text-muted-foreground">
-        Family Member #{index + 1}
+      <p className="mb-4 text-sm font-medium text-muted-foreground uppercase tracking-wider text-[10px]">
+        Child #{index + 1}
       </p>
       
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-3">
         <FormField
           label="Name"
           name={`family-name-${member.id}`}
@@ -70,7 +66,7 @@ const FamilyMemberCard = ({
         
         <div className="space-y-2">
           <Label className="text-sm font-medium text-foreground">
-            Gender <span className="text-destructive">*</span>
+            Gender <span className="text-destructive font-bold">*</span>
           </Label>
           <Select
             value={member.gender}
@@ -80,9 +76,8 @@ const FamilyMemberCard = ({
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent className="bg-popover">
-              <SelectItem value="male">Male</SelectItem>
-              <SelectItem value="female">Female</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
+              <SelectItem value="son">Son</SelectItem>
+              <SelectItem value="daughter">Daughter</SelectItem>
             </SelectContent>
           </Select>
           {errors[`family-gender-${member.id}`] && (
@@ -98,18 +93,6 @@ const FamilyMemberCard = ({
           onChange={(e) => handleMemberChange(member.id, "dateOfBirth", e.target.value)}
           required
           error={errors[`family-dob-${member.id}`]}
-        />
-        
-        <FormField
-          label="Mobile Number"
-          name={`family-mobile-${member.id}`}
-          type="tel"
-          value={member.mobileNumber}
-          onChange={(e) => handleMemberChange(member.id, "mobileNumber", e.target.value)}
-          placeholder="10-digit number"
-          inputMode="numeric"
-          maxLength={10}
-          error={errors[`family-mobile-${member.id}`]}
         />
       </div>
     </div>

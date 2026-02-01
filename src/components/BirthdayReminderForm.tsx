@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { Heart, Plus, Send, CheckCircle, Users, Briefcase, User } from "lucide-react";
+import { useState, useCallback, useRef } from "react";
+import { Heart, Plus, Send, CheckCircle, Users, Briefcase, User, Camera, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -16,13 +16,14 @@ import FamilyMemberCard, { FamilyMember } from "./FamilyMemberCard";
 import { useToast } from "@/hooks/use-toast";
 
 interface FormData {
-  // VCI Member Details
-  vciName: string;
-  vciMobile: string;
-  vciEmail: string;
-  vciDob: string;
-  vciGender: string;
+  // VCEH Member Details
+  vcehName: string;
+  vcehMobile: string;
+  vcehEmail: string;
+  vcehDob: string;
+  vcehGender: string;
   maritalStatus: string;
+  photo: string;
   // Spouse Details
   anniversaryDate: string;
   spouseName: string;
@@ -35,17 +36,18 @@ interface FormData {
 }
 
 const initialFormData: FormData = {
-  vciName: "",
-  vciMobile: "",
-  vciEmail: "",
-  vciDob: "",
-  vciGender: "",
+  vcehName: "",
+  vcehMobile: "",
+  vcehEmail: "",
+  vcehDob: "",
+  vcehGender: "",
   maritalStatus: "",
+  photo: "",
   anniversaryDate: "",
   spouseName: "",
   spouseDob: "",
   spouseMobile: "",
-  spouseGender: "",
+  spouseGender: "female",
   businessName: "",
   employeeCount: "",
 };
@@ -57,13 +59,39 @@ const BirthdayReminderForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Photo must be smaller than 2MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => ({ ...prev, photo: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removePhoto = () => {
+    setFormData((prev) => ({ ...prev, photo: "" }));
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
       
       // Restrict mobile numbers to digits only
-      if ((name === "vciMobile" || name === "spouseMobile") && value !== "") {
+      if ((name === "vcehMobile" || name === "spouseMobile") && value !== "") {
         if (!/^\d*$/.test(value)) return;
       }
 
@@ -96,7 +124,6 @@ const BirthdayReminderForm = () => {
       id: crypto.randomUUID(),
       name: "",
       dateOfBirth: "",
-      mobileNumber: "",
       gender: "",
     };
     setFamilyMembers((prev) => [...prev, newMember]);
@@ -118,27 +145,27 @@ const BirthdayReminderForm = () => {
   const validateForm = useCallback((): boolean => {
     const newErrors: { [key: string]: string } = {};
 
-    // VCI Member validations
-    if (!formData.vciName.trim()) {
-      newErrors.vciName = "Name is required";
+    // VCEH Member validations
+    if (!formData.vcehName.trim()) {
+      newErrors.vcehName = "Name is required";
     }
 
-    if (!formData.vciMobile.trim()) {
-      newErrors.vciMobile = "Mobile number is required";
-    } else if (!/^\d{10}$/.test(formData.vciMobile)) {
-      newErrors.vciMobile = "Enter a valid 10-digit mobile number";
+    if (!formData.vcehMobile.trim()) {
+      newErrors.vcehMobile = "Mobile number is required";
+    } else if (!/^\d{10}$/.test(formData.vcehMobile)) {
+      newErrors.vcehMobile = "Enter a valid 10-digit mobile number";
     }
 
-    if (formData.vciEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.vciEmail)) {
-      newErrors.vciEmail = "Enter a valid email address";
+    if (formData.vcehEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.vcehEmail)) {
+      newErrors.vcehEmail = "Enter a valid email address";
     }
 
-    if (!formData.vciDob) {
-      newErrors.vciDob = "Date of birth is required";
+    if (!formData.vcehDob) {
+      newErrors.vcehDob = "Date of birth is required";
     }
 
-    if (!formData.vciGender) {
-      newErrors.vciGender = "Please select a gender";
+    if (!formData.vcehGender) {
+      newErrors.vcehGender = "Please select a gender";
     }
 
     if (!formData.maritalStatus) {
@@ -172,9 +199,6 @@ const BirthdayReminderForm = () => {
       if (!member.dateOfBirth) {
         newErrors[`family-dob-${member.id}`] = "Date of birth is required";
       }
-      if (member.mobileNumber && !/^\d{10}$/.test(member.mobileNumber)) {
-        newErrors[`family-mobile-${member.id}`] = "Enter valid 10-digit number";
-      }
     });
 
     setErrors(newErrors);
@@ -201,24 +225,25 @@ const BirthdayReminderForm = () => {
     // Prepare submission data
     const submissionData = {
       timestamp: new Date().toISOString(),
-      vciName: formData.vciName,
-      vciMobile: formData.vciMobile,
-      vciEmail: formData.vciEmail,
-      vciDob: formData.vciDob,
-      vciGender: formData.vciGender,
+      vcehName: formData.vcehName,
+      vcehMobile: formData.vcehMobile,
+      vcehEmail: formData.vcehEmail,
+      vcehDob: formData.vcehDob,
+      vcehGender: formData.vcehGender,
       maritalStatus: formData.maritalStatus,
+      photo: formData.photo,
       anniversaryDate: formData.maritalStatus === "married" ? formData.anniversaryDate : "",
       spouseName: formData.maritalStatus === "married" ? formData.spouseName : "",
       spouseDob: formData.maritalStatus === "married" ? formData.spouseDob : "",
       spouseMobile: formData.maritalStatus === "married" ? formData.spouseMobile : "",
-      spouseGender: formData.maritalStatus === "married" ? formData.spouseGender : "",
+      spouseGender: formData.maritalStatus === "married" ? "female" : "",
       businessName: formData.businessName,
       employeeCount: formData.employeeCount,
       familyMembers: familyMembers.map((m) => ({
         name: m.name,
         gender: m.gender,
         dateOfBirth: m.dateOfBirth,
-        mobile: m.mobileNumber,
+        mobile: "NA",
       })),
     };
 
@@ -291,7 +316,7 @@ const BirthdayReminderForm = () => {
           </div>
           <div>
             <h1 className="text-xl font-bold tracking-tight text-foreground">
-              VCI Family Registry
+              VCEH Family Registry
             </h1>
             <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground/80">Birthday & Anniversary Directory</p>
           </div>
@@ -301,72 +326,109 @@ const BirthdayReminderForm = () => {
       {/* Form */}
       <form onSubmit={handleSubmit} className="container mx-auto px-4 pt-6">
         <div className="mx-auto max-w-2xl space-y-5">
-          {/* VCI Member Details */}
+          {/* VCEH Member Details */}
           <FormSection 
             title="Member Information" 
             icon={User}
             className="hover-elevate transition-all duration-300 focus-within:shadow-lg focus-within:border-primary/50"
           >
+            {/* Photo Upload */}
+            <div className="mb-6 flex flex-col items-center justify-center">
+              <div 
+                className={`relative group h-32 w-32 rounded-full border-2 border-dashed border-muted-foreground/30 flex items-center justify-center bg-muted/30 overflow-hidden transition-all duration-300 ${formData.photo ? 'border-primary border-solid' : 'hover:border-primary/50'}`}
+              >
+                {formData.photo ? (
+                  <>
+                    <img src={formData.photo} alt="Member" className="h-full w-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    >
+                      <X className="h-6 w-6 text-white" />
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex flex-col items-center gap-1 text-muted-foreground group-hover:text-primary transition-colors"
+                  >
+                    <Camera className="h-8 w-8" />
+                    <span className="text-[10px] font-bold uppercase tracking-tighter">Upload Photo</span>
+                  </button>
+                )}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handlePhotoUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+              </div>
+              <p className="mt-2 text-[10px] text-muted-foreground font-medium">Profile Picture (Max 2MB)</p>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField
-                label="VCI Member Name"
-                name="vciName"
-                value={formData.vciName}
+                label="Member Name"
+                name="vcehName"
+                value={formData.vcehName}
                 onChange={handleChange}
                 required
                 placeholder="Enter your full name"
-                error={errors.vciName}
+                error={errors.vcehName}
               />
 
               <FormField
-                label="VCI Mobile Number"
-                name="vciMobile"
+                label="Mobile Number"
+                name="vcehMobile"
                 type="tel"
-                value={formData.vciMobile}
+                value={formData.vcehMobile}
                 onChange={handleChange}
                 required
                 placeholder="10-digit mobile number"
                 inputMode="numeric"
                 maxLength={10}
-                error={errors.vciMobile}
+                error={errors.vcehMobile}
               />
 
               <FormField
-                label="VCI Email ID"
-                name="vciEmail"
+                label="Email ID"
+                name="vcehEmail"
                 type="email"
-                value={formData.vciEmail}
+                value={formData.vcehEmail}
                 onChange={handleChange}
                 placeholder="email@example.com"
                 inputMode="email"
-                error={errors.vciEmail}
+                error={errors.vcehEmail}
               />
 
               <FormField
-                label="VCI Date of Birth"
-                name="vciDob"
+                label="Date of Birth"
+                name="vcehDob"
                 type="date"
-                value={formData.vciDob}
+                value={formData.vcehDob}
                 onChange={handleChange}
                 required
-                error={errors.vciDob}
+                error={errors.vcehDob}
               />
             </div>
 
             {/* Gender */}
             <div className="mt-4 space-y-3">
               <Label className="text-sm font-medium text-foreground">
-                Gender <span className="text-destructive">*</span>
+                Gender <span className="text-destructive font-bold">*</span>
               </Label>
               <RadioGroup
-                value={formData.vciGender}
-                onValueChange={(value) => handleSelectChange("vciGender", value)}
+                value={formData.vcehGender}
+                onValueChange={(value) => handleSelectChange("vcehGender", value)}
                 className="flex flex-wrap gap-2"
               >
                 {["Male", "Female", "Other", "Prefer not to say"].map(
                   (option) => {
                     const optionValue = option.toLowerCase().replace(/\s+/g, "-");
-                    const isSelected = formData.vciGender === optionValue;
+                    const isSelected = formData.vcehGender === optionValue;
                     return (
                       <label
                         key={option}
@@ -388,15 +450,15 @@ const BirthdayReminderForm = () => {
                   }
                 )}
               </RadioGroup>
-              {errors.vciGender && (
-                <p className="text-xs text-destructive">{errors.vciGender}</p>
+              {errors.vcehGender && (
+                <p className="text-xs text-destructive">{errors.vcehGender}</p>
               )}
             </div>
 
             {/* Marital Status */}
             <div className="mt-4 space-y-2">
               <Label className="text-sm font-medium text-foreground">
-                Marital Status <span className="text-destructive">*</span>
+                Marital Status <span className="text-destructive font-bold">*</span>
               </Label>
               <Select
                 value={formData.maritalStatus}
@@ -468,56 +530,19 @@ const BirthdayReminderForm = () => {
                   error={errors.spouseMobile}
                 />
               </div>
-
-              {/* Spouse Gender */}
-              <div className="mt-4 space-y-3">
-                <Label className="text-sm font-medium text-foreground">
-                  Spouse Gender <span className="text-destructive">*</span>
-                </Label>
-                <RadioGroup
-                  value={formData.spouseGender}
-                  onValueChange={(value) => handleSelectChange("spouseGender", value)}
-                  className="flex flex-wrap gap-2"
-                >
-                  {["Male", "Female", "Other", "Prefer not to say"].map(
-                    (option) => {
-                      const optionValue = option.toLowerCase().replace(/\s+/g, "-");
-                      const isSelected = formData.spouseGender === optionValue;
-                      return (
-                        <label
-                          key={option}
-                          htmlFor={`spouse-gender-${option}`}
-                          className={`flex items-center justify-center rounded-lg border-2 px-6 py-3 cursor-pointer transition-all duration-200 text-sm font-medium ${
-                            isSelected
-                              ? "border-primary bg-primary/10 text-primary shadow-sm"
-                              : "border-muted bg-background text-muted-foreground hover:border-muted-foreground hover:bg-muted/5"
-                          }`}
-                        >
-                          <RadioGroupItem
-                            value={optionValue}
-                            id={`spouse-gender-${option}`}
-                            className="sr-only"
-                          />
-                          {option}
-                        </label>
-                      );
-                    }
-                  )}
-                </RadioGroup>
-              </div>
             </FormSection>
           )}
 
-          {/* Family Members */}
+          {/* Children Section */}
           <FormSection 
-            title="Family Members" 
+            title="Children" 
             icon={Users}
             className="hover-elevate transition-all duration-300 focus-within:shadow-lg focus-within:border-primary/50"
           >
             <div className="space-y-4">
               {familyMembers.length === 0 ? (
                 <p className="text-center text-sm text-muted-foreground py-4">
-                  No family members added yet. Click the button below to add.
+                  No children added yet. Click the button below to add.
                 </p>
               ) : (
                 familyMembers.map((member, index) => (
@@ -539,7 +564,7 @@ const BirthdayReminderForm = () => {
                 className="w-full"
               >
                 <Plus className="mr-2 h-4 w-4" />
-                Add Family Member
+                Add Child
               </Button>
             </div>
           </FormSection>

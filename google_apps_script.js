@@ -2,21 +2,18 @@ const SHEET_ID = '1ptDMjMQqSuuqV8pMHKUq0fLxzr2iClPLH94UzHlxN3M';
 const SHEET_NAME = 'Sheet1';
 
 /**
- * UPDATED Column Structure to match single-row submission:
+ * UPDATED Column Structure to match separate row submission for family members:
  * 1. TimeStamp
- * 2. VCI Name
- * 3. VCI Mobile
- * 4. VCI Email
- * 5. DOB
- * 6. Gender
- * 7. Marital Status
- * 8. Anniversary
- * 9. Spouse Name
- * 10. Spouse DOB
- * 11. Spouse Mobile
- * 12. Business Name
- * 13. Emp Count
- * 14. Family Members
+ * 2. Type (VCI Member / Spouse / Family Member)
+ * 3. Name
+ * 4. Mobile
+ * 5. Email
+ * 6. DOB
+ * 7. Gender
+ * 8. Marital Status
+ * 9. Anniversary
+ * 10. Business Name
+ * 11. Emp Count
  */
 function doPost(e) {
   try {
@@ -28,46 +25,70 @@ function doPost(e) {
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
         'TimeStamp', 
-        'VCI Name', 
-        'VCI Mobile', 
-        'VCI Email', 
+        'Type',
+        'Name', 
+        'Mobile', 
+        'Email', 
         'DOB', 
         'Gender', 
         'Marital Status', 
         'Anniversary', 
-        'Spouse Name', 
-        'Spouse DOB', 
-        'Spouse Mobile', 
         'Business Name', 
-        'Emp Count', 
-        'Family Members'
+        'Emp Count'
       ]);
     }
 
     var timestamp = data.timestamp || new Date().toISOString();
     
-    // Format family members as a readable string
-    var familyMembersString = (data.familyMembers || []).map(function(m) {
-      return m.name + " (" + m.gender + ", DOB: " + m.dateOfBirth + (m.mobile ? ", Mob: " + m.mobile : "") + ")";
-    }).join(" | ");
-
-    // Append the consolidated row
+    // 1. Add VCI Member Row
     sheet.appendRow([
       timestamp,
+      'VCI Member',
       data.vciName,
       data.vciMobile,
       data.vciEmail || '',
       data.vciDob,
       data.vciGender,
       data.maritalStatus,
-      data.anniversaryDate || '',
-      data.spouseName || '',
-      data.spouseDob || '',
-      data.spouseMobile || '',
+      '',
       data.businessName || '',
-      data.employeeCount || '',
-      familyMembersString
+      data.employeeCount || ''
     ]);
+
+    // 2. Add Spouse Row if married
+    if (data.maritalStatus === 'married' && data.spouseName) {
+      sheet.appendRow([
+        timestamp,
+        'Spouse',
+        data.spouseName,
+        data.spouseMobile || '',
+        '',
+        data.spouseDob || '',
+        '',
+        '',
+        data.anniversaryDate || '',
+        '',
+        ''
+      ]);
+    }
+
+    // 3. Add separate rows for each Family Member
+    var familyMembers = data.familyMembers || [];
+    familyMembers.forEach(function(member) {
+      sheet.appendRow([
+        timestamp,
+        'Family Member',
+        member.name,
+        member.mobile || '',
+        '',
+        member.dateOfBirth || '',
+        member.gender || '',
+        '',
+        '',
+        '',
+        ''
+      ]);
+    });
     
     return ContentService.createTextOutput(JSON.stringify({success: true}))
       .setMimeType(ContentService.MimeType.JSON);

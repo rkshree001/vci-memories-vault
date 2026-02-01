@@ -176,7 +176,7 @@ const BirthdayReminderForm = () => {
   }, [formData, familyMembers]);
 
   // IMPORTANT: Replace this with your Google Apps Script Web App URL
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqp7eWV-5d0-mZCykHAVFcWjbtUJiay9LUzOyrdVd5OT3hq4eY2QyIz0-F0z0Cak-ghQ/exec";
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymmB2vvtsVFSRzHTCZ3zl4PUiysf_ZWPFAXYNSYMS1s7b6kAUtrAHg1Wqmj1vr_LvuSA/exec";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

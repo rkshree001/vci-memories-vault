@@ -87,17 +87,6 @@ const BirthdayReminderForm = () => {
     }
   }, [errors]);
 
-  const handleDateChange = useCallback((name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
-    }
-  }, [errors]);
-
   const addFamilyMember = useCallback(() => {
     const newMember: FamilyMember = {
       id: crypto.randomUUID(),
@@ -356,7 +345,6 @@ const BirthdayReminderForm = () => {
                 type="date"
                 value={formData.vciDob}
                 onChange={handleChange}
-                onDateChange={handleDateChange}
                 required
                 error={errors.vciDob}
               />
@@ -370,31 +358,31 @@ const BirthdayReminderForm = () => {
               <RadioGroup
                 value={formData.vciGender}
                 onValueChange={(value) => handleSelectChange("vciGender", value)}
-                className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3"
+                className="flex flex-wrap gap-2"
               >
                 {["Male", "Female", "Other", "Prefer not to say"].map(
-                  (option) => (
-                    <div 
-                      key={option} 
-                      className={`flex items-center space-x-2 rounded-lg border px-3 py-2.5 cursor-pointer transition-all ${
-                        formData.vciGender === option.toLowerCase().replace(/\s+/g, "-")
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                    >
-                      <RadioGroupItem
-                        value={option.toLowerCase().replace(/\s+/g, "-")}
-                        id={`gender-${option}`}
-                        className="border-muted-foreground data-[state=checked]:border-primary data-[state=checked]:text-primary"
-                      />
-                      <Label
+                  (option) => {
+                    const optionValue = option.toLowerCase().replace(/\s+/g, "-");
+                    const isSelected = formData.vciGender === optionValue;
+                    return (
+                      <label
+                        key={option}
                         htmlFor={`gender-${option}`}
-                        className="cursor-pointer text-sm font-normal"
+                        className={`inline-flex items-center gap-2 rounded-md border px-4 py-2 cursor-pointer transition-colors text-sm ${
+                          isSelected
+                            ? "border-primary bg-primary/5 text-foreground"
+                            : "border-border bg-background text-foreground hover:border-muted-foreground"
+                        }`}
                       >
+                        <RadioGroupItem
+                          value={optionValue}
+                          id={`gender-${option}`}
+                          className="h-4 w-4"
+                        />
                         {option}
-                      </Label>
-                    </div>
-                  )
+                      </label>
+                    );
+                  }
                 )}
               </RadioGroup>
               {errors.vciGender && (
@@ -437,7 +425,6 @@ const BirthdayReminderForm = () => {
                   type="date"
                   value={formData.anniversaryDate}
                   onChange={handleChange}
-                  onDateChange={handleDateChange}
                   required
                   error={errors.anniversaryDate}
                 />
@@ -458,7 +445,6 @@ const BirthdayReminderForm = () => {
                   type="date"
                   value={formData.spouseDob}
                   onChange={handleChange}
-                  onDateChange={handleDateChange}
                   required
                   error={errors.spouseDob}
                 />

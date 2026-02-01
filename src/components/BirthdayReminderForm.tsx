@@ -176,7 +176,7 @@ const BirthdayReminderForm = () => {
   }, [formData, familyMembers]);
 
   // IMPORTANT: Replace this with your Google Apps Script Web App URL
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwYVvzX3K_Xl-h_G2it1Ei4QBcTpQgjifVQtU9tay0-P5Ha1GBRRUGtEIQHgRn2qeOLg/exec";
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvULPrBdPS7iWrdr_idhLT5vdLQ5oSGd2yqI_E82Jgsyn59Sb_Auxv7j--b9HEtlUv8A/exec";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -281,13 +281,13 @@ const BirthdayReminderForm = () => {
       <header className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
         <div className="container mx-auto flex items-center gap-3 px-4 py-4">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Cake className="h-5 w-5" />
+            <Users className="h-5 w-5" />
           </div>
           <div>
             <h1 className="text-lg font-semibold text-foreground">
-              VCI Details
+              VCI Family Registry
             </h1>
-            <p className="text-xs text-muted-foreground">Birthday & Anniversary Reminder</p>
+            <p className="text-xs text-muted-foreground">Birthday & Anniversary Directory</p>
           </div>
         </div>
       </header>

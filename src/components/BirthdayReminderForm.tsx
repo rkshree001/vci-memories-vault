@@ -193,33 +193,24 @@ const BirthdayReminderForm = () => {
     // Prepare submission data
     const submissionData = {
       timestamp: new Date().toISOString(),
-      vciMember: {
-        name: formData.vciName,
-        mobile: formData.vciMobile,
-        email: formData.vciEmail,
-        dateOfBirth: formData.vciDob,
-        gender: formData.vciGender,
-        maritalStatus: formData.maritalStatus,
-      },
-      spouse:
-        formData.maritalStatus === "married"
-          ? {
-              anniversaryDate: formData.anniversaryDate,
-              name: formData.spouseName,
-              dateOfBirth: formData.spouseDob,
-              mobile: formData.spouseMobile,
-            }
-          : null,
+      vciName: formData.vciName,
+      vciMobile: formData.vciMobile,
+      vciEmail: formData.vciEmail,
+      vciDob: formData.vciDob,
+      vciGender: formData.vciGender,
+      maritalStatus: formData.maritalStatus,
+      anniversaryDate: formData.maritalStatus === "married" ? formData.anniversaryDate : "",
+      spouseName: formData.maritalStatus === "married" ? formData.spouseName : "",
+      spouseDob: formData.maritalStatus === "married" ? formData.spouseDob : "",
+      spouseMobile: formData.maritalStatus === "married" ? formData.spouseMobile : "",
+      businessName: formData.businessName,
+      employeeCount: formData.employeeCount,
       familyMembers: familyMembers.map((m) => ({
         name: m.name,
         gender: m.gender,
         dateOfBirth: m.dateOfBirth,
         mobile: m.mobileNumber,
       })),
-      business: {
-        name: formData.businessName,
-        employeeCount: formData.employeeCount,
-      },
     };
 
     try {

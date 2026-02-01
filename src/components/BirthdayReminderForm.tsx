@@ -296,7 +296,11 @@ const BirthdayReminderForm = () => {
       <form onSubmit={handleSubmit} className="container mx-auto px-4 pt-6">
         <div className="mx-auto max-w-2xl space-y-5">
           {/* VCI Member Details */}
-          <FormSection title="VCI Member Details" icon={User}>
+          <FormSection 
+            title="Member Information" 
+            icon={User}
+            className="hover-elevate transition-all duration-300"
+          >
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField
                 label="VCI Member Name"
@@ -410,7 +414,11 @@ const BirthdayReminderForm = () => {
 
           {/* Spouse Details - Conditional */}
           {formData.maritalStatus === "married" && (
-            <FormSection title="Spouse Details" icon={Heart}>
+            <FormSection 
+              title="Spouse Details" 
+              icon={Heart}
+              className="hover-elevate transition-all duration-300"
+            >
               <div className="grid gap-4 sm:grid-cols-2">
                 <FormField
                   label="Anniversary Date"
@@ -495,7 +503,11 @@ const BirthdayReminderForm = () => {
           )}
 
           {/* Family Members */}
-          <FormSection title="Family Members" icon={Users}>
+          <FormSection 
+            title="Family Members" 
+            icon={Users}
+            className="hover-elevate transition-all duration-300"
+          >
             <div className="space-y-4">
               {familyMembers.length === 0 ? (
                 <p className="text-center text-sm text-muted-foreground py-4">
@@ -527,7 +539,11 @@ const BirthdayReminderForm = () => {
           </FormSection>
 
           {/* Business Details */}
-          <FormSection title="Business Details" icon={Briefcase}>
+          <FormSection 
+            title="Business Details" 
+            icon={Briefcase}
+            className="hover-elevate transition-all duration-300"
+          >
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField
                 label="Business Name"

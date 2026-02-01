@@ -89,6 +89,7 @@ const BirthdayReminderForm = () => {
       name: "",
       dateOfBirth: "",
       mobileNumber: "",
+      gender: "",
     };
     setFamilyMembers((prev) => [...prev, newMember]);
   }, []);
@@ -157,6 +158,9 @@ const BirthdayReminderForm = () => {
       if (!member.name.trim()) {
         newErrors[`family-name-${member.id}`] = "Name is required";
       }
+      if (!member.gender) {
+        newErrors[`family-gender-${member.id}`] = "Gender is required";
+      }
       if (!member.dateOfBirth) {
         newErrors[`family-dob-${member.id}`] = "Date of birth is required";
       }
@@ -208,6 +212,7 @@ const BirthdayReminderForm = () => {
           : null,
       familyMembers: familyMembers.map((m) => ({
         name: m.name,
+        gender: m.gender,
         dateOfBirth: m.dateOfBirth,
         mobile: m.mobileNumber,
       })),

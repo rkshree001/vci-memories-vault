@@ -1,5 +1,13 @@
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import FormField from "./FormField";
 
 export interface FamilyMember {
@@ -7,6 +15,7 @@ export interface FamilyMember {
   name: string;
   dateOfBirth: string;
   mobileNumber: string;
+  gender: string;
 }
 
 interface FamilyMemberCardProps {
@@ -41,7 +50,7 @@ const FamilyMemberCard = ({
         Family Member #{index + 1}
       </p>
       
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
         <FormField
           label="Name"
           name={`family-name-${member.id}`}
@@ -51,6 +60,28 @@ const FamilyMemberCard = ({
           placeholder="Enter name"
           error={errors[`family-name-${member.id}`]}
         />
+        
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-foreground">
+            Gender <span className="text-destructive">*</span>
+          </Label>
+          <Select
+            value={member.gender}
+            onValueChange={(value) => onChange(member.id, "gender", value)}
+          >
+            <SelectTrigger className="w-full bg-background">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent className="bg-popover">
+              <SelectItem value="male">Male</SelectItem>
+              <SelectItem value="female">Female</SelectItem>
+              <SelectItem value="other">Other</SelectItem>
+            </SelectContent>
+          </Select>
+          {errors[`family-gender-${member.id}`] && (
+            <p className="text-xs text-destructive">{errors[`family-gender-${member.id}`]}</p>
+          )}
+        </div>
         
         <FormField
           label="Date of Birth"

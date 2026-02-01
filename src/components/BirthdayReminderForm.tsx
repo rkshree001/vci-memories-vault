@@ -100,8 +100,8 @@ const BirthdayReminderForm = () => {
           const ctx = canvas.getContext("2d");
           ctx?.drawImage(img, 0, 0, width, height);
           
-          // Compress to JPEG with 0.7 quality
-          const optimizedDataUrl = canvas.toDataURL("image/jpeg", 0.7);
+          // Compress to JPEG with 0.6 quality (more aggressive)
+          const optimizedDataUrl = canvas.toDataURL("image/jpeg", 0.6);
           setFormData((prev) => ({ ...prev, photo: optimizedDataUrl }));
         };
         img.src = reader.result as string;

@@ -81,8 +81,8 @@ const BirthdayReminderForm = () => {
           let width = img.width;
           let height = img.height;
           
-          // Max dimensions for optimization
-          const MAX_SIZE = 800;
+          // Max dimensions for optimization - reduced for reliability
+          const MAX_SIZE = 600;
           if (width > height) {
             if (width > MAX_SIZE) {
               height *= MAX_SIZE / width;
@@ -100,8 +100,8 @@ const BirthdayReminderForm = () => {
           const ctx = canvas.getContext("2d");
           ctx?.drawImage(img, 0, 0, width, height);
           
-          // Compress to JPEG with 0.6 quality (more aggressive)
-          const optimizedDataUrl = canvas.toDataURL("image/jpeg", 0.6);
+          // Compress to JPEG with 0.5 quality (even more aggressive)
+          const optimizedDataUrl = canvas.toDataURL("image/jpeg", 0.5);
           setFormData((prev) => ({ ...prev, photo: optimizedDataUrl }));
         };
         img.src = reader.result as string;

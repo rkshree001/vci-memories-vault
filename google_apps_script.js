@@ -16,19 +16,40 @@ function doPost(e) {
 
     var timestamp = data.timestamp || new Date().toISOString();
     var mainVciName = data.vciName;
+    var maritalStatus = data.maritalStatus;
+    var anniversary = data.anniversaryDate || '';
     
-    // 1. Add VCI Member Row
+    // 1. Add VCI Member Row - Now including Anniversary and Marital Status context
     sheet.appendRow([
-      timestamp, mainVciName, 'VCI Member', data.vciName, data.vciMobile, 
-      data.vciEmail || '', data.vciDob, data.vciGender, data.maritalStatus, 
-      '', data.businessName || '', data.employeeCount || ''
+      timestamp, 
+      mainVciName, 
+      'VCI Member', 
+      data.vciName, 
+      data.vciMobile, 
+      data.vciEmail || '', 
+      data.vciDob, 
+      data.vciGender, 
+      maritalStatus, 
+      anniversary, 
+      data.businessName || '', 
+      data.employeeCount || ''
     ]);
 
     // 2. Add Spouse Row
-    if (data.maritalStatus === 'married' && data.spouseName) {
+    if (maritalStatus === 'married' && data.spouseName) {
       sheet.appendRow([
-        timestamp, mainVciName, 'Spouse', data.spouseName, data.spouseMobile || '', 
-        '', data.spouseDob || '', data.spouseGender || '', data.anniversaryDate || '', '', ''
+        timestamp, 
+        mainVciName, 
+        'Spouse', 
+        data.spouseName, 
+        data.spouseMobile || '', 
+        '', 
+        data.spouseDob || '', 
+        data.spouseGender || '', 
+        maritalStatus, 
+        anniversary, 
+        '', 
+        ''
       ]);
     }
 
@@ -36,8 +57,18 @@ function doPost(e) {
     var familyMembers = data.familyMembers || [];
     familyMembers.forEach(function(member) {
       sheet.appendRow([
-        timestamp, mainVciName, 'Family Member', member.name, member.mobile || '', 
-        '', member.dateOfBirth || '', member.gender || '', '', '', '', ''
+        timestamp, 
+        mainVciName, 
+        'Family Member', 
+        member.name, 
+        member.mobile || '', 
+        '', 
+        member.dateOfBirth || '', 
+        member.gender || '', 
+        '', 
+        '', 
+        '', 
+        ''
       ]);
     });
     

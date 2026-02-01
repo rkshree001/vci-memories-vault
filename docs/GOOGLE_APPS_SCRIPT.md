@@ -35,7 +35,7 @@
  */
 
 // Configuration - Update this with your Sheet ID
-const SHEET_ID = 'YOUR_GOOGLE_SHEET_ID'; // Get this from the URL of your Google Sheet
+const SHEET_ID = '1ptDMjMQqSuuqV8pMHKUq0fLxzr2iClPLH94UzHlxN3M'; // Your Google Sheet ID
 const SHEET_NAME = 'Sheet1';
 
 /**

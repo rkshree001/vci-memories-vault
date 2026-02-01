@@ -1,23 +1,24 @@
 /**
- * GOOGLE APPS SCRIPT FOR VCEH FAMILY REGISTRY (v2 - Photo Support)
+ * GOOGLE APPS SCRIPT FOR VCEH FAMILY REGISTRY (v3 - Optimized)
  * 
  * Instructions:
- * 1. Open Google Sheets
- * 2. Extensions > Apps Script
- * 3. Replace ALL existing code with this script
- * 4. Create a folder in Google Drive named "VCEH Photos"
- * 5. Copy that folder's ID from the URL (e.g., 1abc123...)
- * 6. Replace "PASTE_YOUR_FOLDER_ID_HERE" below with that ID
- * 7. Deploy > New Deployment > Web App > Access: Anyone
+ * 1. Open your Google Sheet.
+ * 2. Extensions > Apps Script.
+ * 3. Replace EVERYTHING with this code.
+ * 4. Replace the FOLDER_ID below with your Google Drive Folder ID.
+ * 5. Replace the SHEET_ID below with your Google Sheet ID.
+ * 6. Deploy > New Deployment > Web App > Access: Anyone.
  */
 
 const FOLDER_ID = "PASTE_YOUR_FOLDER_ID_HERE";
+const SHEET_ID = "1ptDMjMQqSuuqV8pMHKUq0fLxzr2iClPLH94UzHlxN3M";
+const SHEET_NAME = "Sheet1";
 
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheets()[0];
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    const sheet = ss.getSheetByName(SHEET_NAME);
     
     // Set headers if empty
     if (sheet.getLastRow() === 0) {
@@ -45,7 +46,7 @@ function doPost(e) {
         const folder = DriveApp.getFolderById(FOLDER_ID);
         const contentType = data.photo.substring(5, data.photo.indexOf(';'));
         const bytes = Utilities.base64Decode(data.photo.split(',')[1]);
-        const fileName = "VCEH_" + data.vcehName.replace(/\s+/g, '_') + "_" + new Date().getTime() + ".png";
+        const fileName = "VCEH_" + (data.vcehName || "Member").replace(/\s+/g, '_') + "_" + new Date().getTime() + ".png";
         const file = folder.createFile(Utilities.newBlob(bytes, contentType, fileName));
         file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
         photoUrl = file.getUrl();
@@ -54,37 +55,26 @@ function doPost(e) {
       }
     }
     
-    // 1. Add Member Row
+    const timestamp = data.timestamp || new Date().toISOString();
+    const vcehName = data.vcehName || "NA";
+    const maritalStatus = data.maritalStatus || "NA";
+    const anniversary = data.anniversaryDate || "NA";
+    const businessName = data.businessName || "NA";
+    const employeeCount = data.employeeCount || "NA";
+    
+    // 1. Add VCEH Member Row
     sheet.appendRow([
-      data.timestamp,
-      data.vcehName,
-      data.vcehName,
-      data.vcehMobile,
-      data.vcehEmail || "NA",
-      data.vcehDob,
-      data.vcehGender,
-      data.maritalStatus,
-      data.maritalStatus === "married" ? data.anniversaryDate : "NA",
-      photoUrl,
-      data.businessName || "NA",
-      data.employeeCount || "NA"
+      timestamp, vcehName, vcehName, data.vcehMobile || "NA", 
+      data.vcehEmail || "NA", data.vcehDob || "NA", data.vcehGender || "NA", 
+      maritalStatus, anniversary, photoUrl, businessName, employeeCount
     ]);
     
     // 2. Add Spouse Row
-    if (data.maritalStatus === "married") {
+    if (maritalStatus === "married") {
       sheet.appendRow([
-        data.timestamp,
-        data.vcehName,
-        data.spouseName,
-        data.spouseMobile || "NA",
-        "NA",
-        data.spouseDob,
-        data.spouseGender,
-        data.maritalStatus,
-        data.anniversaryDate,
-        "NA",
-        data.businessName || "NA",
-        "NA"
+        timestamp, vcehName, data.spouseName || "NA", data.spouseMobile || "NA", 
+        "NA", data.spouseDob || "NA", data.spouseGender || "NA", 
+        maritalStatus, anniversary, "NA", businessName, "NA"
       ]);
     }
     
@@ -92,18 +82,9 @@ function doPost(e) {
     if (data.familyMembers && data.familyMembers.length > 0) {
       data.familyMembers.forEach(function(child) {
         sheet.appendRow([
-          data.timestamp,
-          data.vcehName,
-          child.name,
-          "NA",
-          "NA",
-          child.dateOfBirth,
-          child.gender,
-          "NA",
-          "NA",
-          "NA",
-          data.businessName || "NA",
-          "NA"
+          timestamp, vcehName, child.name || "NA", "NA", "NA", 
+          child.dateOfBirth || "NA", child.gender || "NA", "NA", "NA", "NA", 
+          businessName, "NA"
         ]);
       });
     }

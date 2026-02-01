@@ -61,7 +61,7 @@ const FormField = ({
           {label}
           {required && <span className="ml-1 text-destructive">*</span>}
         </Label>
-        <div className="flex gap-2">
+        <div className="relative">
           <Input
             id={name}
             name={name}
@@ -69,17 +69,17 @@ const FormField = ({
             value={value}
             onChange={onChange}
             required={required}
-            className={`flex-1 bg-background ${error ? "border-destructive" : ""}`}
+            className={`w-full bg-background pr-10 ${error ? "border-destructive" : ""}`}
           />
           <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
             <PopoverTrigger asChild>
               <Button
                 type="button"
-                variant="outline"
+                variant="ghost"
                 size="icon"
-                className="shrink-0"
+                className="absolute right-0 top-0 h-full w-10 hover:bg-transparent"
               >
-                <CalendarIcon className="h-4 w-4" />
+                <CalendarIcon className="h-4 w-4 text-muted-foreground" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0 bg-popover z-50" align="end">
@@ -89,9 +89,9 @@ const FormField = ({
                 onSelect={handleCalendarSelect}
                 initialFocus
                 className="p-3 pointer-events-auto"
-                captionLayout="dropdown-buttons"
+                captionLayout="dropdown"
                 fromYear={1920}
-                toYear={new Date().getFullYear()}
+                toYear={new Date().getFullYear() + 10}
               />
             </PopoverContent>
           </Popover>

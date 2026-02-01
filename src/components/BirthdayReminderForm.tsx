@@ -269,11 +269,8 @@ const BirthdayReminderForm = () => {
           </div>
           <div>
             <h1 className="text-lg font-bold text-foreground">
-              VCI Birthday Reminder
+              VCI Details
             </h1>
-            <p className="text-xs text-muted-foreground">
-              Smart Calendar Application
-            </p>
           </div>
         </div>
       </header>

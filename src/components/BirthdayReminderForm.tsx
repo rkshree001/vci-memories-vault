@@ -282,7 +282,7 @@ const BirthdayReminderForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 pb-8">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-muted/50 via-background to-background pb-12">
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
         <div className="container mx-auto flex items-center gap-3 px-4 py-4">
@@ -290,10 +290,10 @@ const BirthdayReminderForm = () => {
             <Heart className="h-5 w-5 fill-current" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-foreground">
+            <h1 className="text-xl font-bold tracking-tight text-foreground">
               VCI Family Registry
             </h1>
-            <p className="text-xs text-muted-foreground">Birthday & Anniversary Directory</p>
+            <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground/80">Birthday & Anniversary Directory</p>
           </div>
         </div>
       </header>
@@ -574,7 +574,7 @@ const BirthdayReminderForm = () => {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-6 text-base font-medium"
+            className="w-full py-7 text-base font-semibold shadow-lg shadow-primary/20 transition-all duration-300 active:scale-[0.98]"
           >
             {isSubmitting ? (
               <>

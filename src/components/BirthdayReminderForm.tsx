@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Cake, Plus, Send, CheckCircle, Heart, Users, Briefcase, User, Sparkles } from "lucide-react";
+import { Cake, Plus, Send, CheckCircle, Heart, Users, Briefcase, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -294,16 +294,15 @@ const BirthdayReminderForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 pb-8">
+    <div className="min-h-screen bg-muted/30 pb-8">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 shadow-sm">
+      <header className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
         <div className="container mx-auto flex items-center gap-3 px-4 py-4">
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
-            <Cake className="h-6 w-6 text-primary-foreground" />
-            <Sparkles className="absolute -right-1 -top-1 h-4 w-4 text-yellow-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <Cake className="h-5 w-5" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-foreground tracking-tight">
+            <h1 className="text-lg font-semibold text-foreground">
               VCI Details
             </h1>
             <p className="text-xs text-muted-foreground">Birthday & Anniversary Reminder</p>
@@ -315,7 +314,7 @@ const BirthdayReminderForm = () => {
       <form onSubmit={handleSubmit} className="container mx-auto px-4 pt-6">
         <div className="mx-auto max-w-2xl space-y-5">
           {/* VCI Member Details */}
-          <FormSection title="VCI Member Details" icon={User} accentColor="primary">
+          <FormSection title="VCI Member Details" icon={User}>
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField
                 label="VCI Member Name"
@@ -364,25 +363,33 @@ const BirthdayReminderForm = () => {
             </div>
 
             {/* Gender */}
-            <div className="mt-4 space-y-2">
+            <div className="mt-4 space-y-3">
               <Label className="text-sm font-medium text-foreground">
                 Gender <span className="text-destructive">*</span>
               </Label>
               <RadioGroup
                 value={formData.vciGender}
                 onValueChange={(value) => handleSelectChange("vciGender", value)}
-                className="flex flex-wrap gap-4"
+                className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3"
               >
                 {["Male", "Female", "Other", "Prefer not to say"].map(
                   (option) => (
-                    <div key={option} className="flex items-center space-x-2">
+                    <div 
+                      key={option} 
+                      className={`flex items-center space-x-2 rounded-lg border px-3 py-2.5 cursor-pointer transition-all ${
+                        formData.vciGender === option.toLowerCase().replace(/\s+/g, "-")
+                          ? "border-primary bg-primary/5"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
                       <RadioGroupItem
                         value={option.toLowerCase().replace(/\s+/g, "-")}
                         id={`gender-${option}`}
+                        className="border-muted-foreground data-[state=checked]:border-primary data-[state=checked]:text-primary"
                       />
                       <Label
                         htmlFor={`gender-${option}`}
-                        className="cursor-pointer text-sm"
+                        className="cursor-pointer text-sm font-normal"
                       >
                         {option}
                       </Label>
@@ -422,7 +429,7 @@ const BirthdayReminderForm = () => {
 
           {/* Spouse Details - Conditional */}
           {formData.maritalStatus === "married" && (
-            <FormSection title="Spouse Details" icon={Heart} accentColor="pink">
+            <FormSection title="Spouse Details" icon={Heart}>
               <div className="grid gap-4 sm:grid-cols-2">
                 <FormField
                   label="Anniversary Date"
@@ -472,7 +479,7 @@ const BirthdayReminderForm = () => {
           )}
 
           {/* Family Members */}
-          <FormSection title="Family Members" icon={Users} accentColor="blue">
+          <FormSection title="Family Members" icon={Users}>
             <div className="space-y-4">
               {familyMembers.length === 0 ? (
                 <p className="text-center text-sm text-muted-foreground py-4">
@@ -504,7 +511,7 @@ const BirthdayReminderForm = () => {
           </FormSection>
 
           {/* Business Details */}
-          <FormSection title="Business Details" icon={Briefcase} accentColor="orange">
+          <FormSection title="Business Details" icon={Briefcase}>
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField
                 label="Business Name"
@@ -549,16 +556,16 @@ const BirthdayReminderForm = () => {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-6 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-primary to-primary/90"
+            className="w-full py-6 text-base font-medium"
           >
             {isSubmitting ? (
               <>
-                <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
                 Submitting...
               </>
             ) : (
               <>
-                <Send className="mr-2 h-5 w-5" />
+                <Send className="mr-2 h-4 w-4" />
                 Submit Details
               </>
             )}

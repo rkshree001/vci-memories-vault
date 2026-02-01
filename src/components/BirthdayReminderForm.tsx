@@ -228,10 +228,6 @@ const BirthdayReminderForm = () => {
       setIsSubmitting(false);
     }
 
-    toast({
-      title: "Success!",
-      description: "Your birthday reminder has been submitted successfully.",
-    });
   };
 
   const resetForm = () => {

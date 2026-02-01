@@ -69,7 +69,7 @@ const FormField = ({
             value={value}
             onChange={onChange}
             required={required}
-            className={`w-full bg-background pr-10 ${error ? "border-destructive" : ""}`}
+            className={`w-full bg-background pr-12 ${error ? "border-destructive" : ""}`}
           />
           <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
             <PopoverTrigger asChild>
@@ -77,7 +77,7 @@ const FormField = ({
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute right-0 top-0 h-full w-10 hover:bg-transparent"
+                className="absolute right-0 top-0 h-full w-12 hover:bg-transparent"
               >
                 <CalendarIcon className="h-4 w-4 text-muted-foreground" />
               </Button>

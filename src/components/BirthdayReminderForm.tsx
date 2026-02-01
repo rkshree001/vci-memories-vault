@@ -150,6 +150,9 @@ const BirthdayReminderForm = () => {
     return Object.keys(newErrors).length === 0;
   }, [formData, familyMembers]);
 
+  // IMPORTANT: Replace this with your Google Apps Script Web App URL
+  const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -197,13 +200,33 @@ const BirthdayReminderForm = () => {
       },
     };
 
-    console.log("Form Data:", submissionData);
+    try {
+      // Submit to Google Apps Script
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors", // Required for Google Apps Script
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(submissionData),
+      });
 
-    // Simulate API call (replace with actual Google Apps Script endpoint)
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+      // no-cors mode doesn't return response, so we assume success
+      setIsSubmitted(true);
+      toast({
+        title: "Success!",
+        description: "Your birthday reminder has been submitted successfully.",
+      });
+    } catch (error) {
+      console.error("Submission error:", error);
+      toast({
+        title: "Submission Failed",
+        description: "Please check your internet connection and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
 
     toast({
       title: "Success!",
